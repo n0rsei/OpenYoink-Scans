@@ -1,0 +1,95 @@
+name: Build OpenYoink with automatic scans
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    steps:
+      - name: Download reviewed OpenYoink source
+        uses: actions/checkout@v4
+        with:
+          repository: MuQY1818/OpenYoink
+          ref: 4ea503eb60c907bfbf2ee6730ccaf5ddf7d8a3dd
+          path: source
+          persist-credentials: false
+      - name: Add automatic scans feature
+        working-directory: source
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import base64, hashlib, subprocess, zlib
+          patch = zlib.decompress(base64.b64decode("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"))
+          assert hashlib.sha256(patch).hexdigest() == "1b1d4eb0d1fc5e048662fc343bc892b7e59a261c565d90eb3e146593fba360e8"
+          subprocess.run(["git", "apply", "--check", "-"], input=patch, check=True)
+          subprocess.run(["git", "apply", "-"], input=patch, check=True)
+          PYTHON
+      - name: Check PDF importer
+        working-directory: source
+        run: |
+          swiftc -swift-version 6 OpenYoink/Services/ScanFolderImporter.swift Scripts/ScanFolderSmoke.swift -o "$RUNNER_TEMP/scan-smoke"
+          "$RUNNER_TEMP/scan-smoke"
+      - name: Build the app for Apple silicon
+        working-directory: source
+        run: |
+          xcodebuild -version
+          xcodebuild -project Open-Yoink.xcodeproj -scheme OpenYoink -configuration Release -destination 'platform=macOS' -derivedDataPath build ARCHS=arm64 ONLY_ACTIVE_ARCH=NO CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= build
+      - name: Run unit tests
+        working-directory: source
+        run: |
+          xcodebuild -project Open-Yoink.xcodeproj -scheme OpenYoink -configuration Debug -destination 'platform=macOS' -derivedDataPath build ARCHS=arm64 ONLY_ACTIVE_ARCH=NO CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= test -only-testing:OpenYoinkTests
+      - name: Make drag-to-Applications installer
+        shell: bash
+        run: |
+          mkdir -p installer downloads
+          ditto source/build/Build/Products/Release/OpenYoink.app installer/OpenYoink.app
+          codesign --verify --deep --strict --verbose=2 installer/OpenYoink.app
+          ln -s /Applications installer/Applications
+          cp source/LICENSE installer/LICENSE.txt
+          cp source/THIRD_PARTY_NOTICES.md installer/THIRD-PARTY-NOTICES.txt
+          cat > installer/START-HERE.txt <<'GUIDE'
+          OpenYoink with automatic scan import
+
+          1. Quit your existing OpenYoink, if running. Keep a backup of the old app.
+          2. Drag OpenYoink onto Applications. Replace the previous copy if asked.
+          3. Open OpenYoink from Applications. This free custom build is not Apple-notarised.
+             If macOS blocks it, use System Settings > Privacy & Security > Open Anyway
+             after confirming this is the build you requested. Do not disable Gatekeeper.
+          4. Open OpenYoink Settings > General > Automatic scan import.
+          5. Click Choose Scans Folder and select Desktop/Scans (or your chosen folder).
+          6. Enable Launch OpenYoink at login and Enable Side Shelf.
+          7. Set your scanner's save destination to that SAME folder and choose PDF format.
+
+          The folder picker tells OpenYoink where to watch. It does not change your scanner settings.
+          After a PDF stops changing for at least 10 seconds and passes validation, it appears in the shelf.
+          Originals stay in your scan folder. Existing PDFs in that folder also import.
+          Test a full multi-page scan before relying on this feature.
+          Keep OpenYoink running. This custom build is updated manually.
+          GUIDE
+          hdiutil create -volname 'OpenYoink Scans' -srcfolder installer -ov -format UDZO downloads/OpenYoink-Scans.dmg
+          shasum -a 256 downloads/OpenYoink-Scans.dmg > downloads/SHA256.txt
+      - name: Publish the download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          Download **OpenYoink-Scans.dmg** below. Open it and drag OpenYoink onto Applications.
+
+          Open OpenYoink Settings → General → Automatic scan import → Choose Scans Folder.
+          Choose the same folder your scanner saves PDFs into. Enable launch at login.
+
+          This is a custom OpenYoink build for Apple-silicon Macs running macOS 15 or later.
+          It preserves scan originals. It is locally signed, not Apple-notarised; macOS may require
+          Privacy & Security → Open Anyway on first launch. Test your real scanner after setup.
+          Automatic upstream updates are disabled to preserve the scan-import feature.
+
+          Built from MuQY1818/OpenYoink commit 4ea503eb60c907bfbf2ee6730ccaf5ddf7d8a3dd
+          with the scan-folder patch embedded in this repository's build workflow.
+          PDF helper smoke checks and unit tests must pass before this download is published.
+          NOTES
+          gh release create "scans-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}" downloads/OpenYoink-Scans.dmg downloads/SHA256.txt --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'OpenYoink with automatic scans' --notes-file "$RUNNER_TEMP/release-notes.md" --latest
